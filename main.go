@@ -34,7 +34,20 @@ func BaseHandler(w http.ResponseWriter, r *http.Request) {
 func GpsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, currentLocation)
+
+		var location = GPS{
+			Lat: currentLocation.Lat, 
+			Lng: currentLocation.Lng, 
+		}
+
+		jsonData, err := json.Marshal(location)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprint(w, string(jsonData))
 	}
 	if r.Method == "POST" {
 		body, err := io.ReadAll(r.Body)
